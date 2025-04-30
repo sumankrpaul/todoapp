@@ -1,4 +1,4 @@
-version: '3'
+version: '3.5'
 services:
   api: 
     build: 
@@ -8,6 +8,15 @@ services:
       - /app/node_modules
       - ./backend:/app
     ports:
-      - "8000:4000"
+      - "8000:8000"
     environment:
       - PORT=8000
+  client:
+    build: 
+      context: fontend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /app/node_modules
+      - ./fontend:/app
+    ports:
+      - "8001:8001"
