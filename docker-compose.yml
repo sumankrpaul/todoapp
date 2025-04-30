@@ -1,6 +1,19 @@
 version: '3.5'
 services:
+  pgsql:
+    container_name: pg-database
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=suman
+      - POSTGRES_PASSWORD=suman
+      - POSTGRES_DB=test
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
   api: 
+    depends_on:
+      - db
     build: 
       context: backend
       dockerfile: Dockerfile.dev
