@@ -7,13 +7,13 @@ services:
       - "5432:5432"
     environment:
       - POSTGRES_USER=suman
-      - POSTGRES_PASSWORD=suman
-      - POSTGRES_DB=test
+      - POSTGRES_PASSWORD=mypass
+      - POSTGRES_DB=todos
     volumes:
       - ./pgdata:/var/lib/postgresql/data
   api: 
     depends_on:
-      - db
+      - pgsql
     build: 
       context: backend
       dockerfile: Dockerfile.dev
@@ -24,6 +24,7 @@ services:
       - "8000:8000"
     environment:
       - PORT=8000
+      - DATABASE_URL=postgres://suman:mypass@pgsql:5432/todos
   client:
     build: 
       context: fontend

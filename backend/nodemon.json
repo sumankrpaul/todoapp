@@ -1,0 +1,7 @@
+{
+    "watch": ["src", "prisma"],
+    "ext": "ts,json",
+    "ignore": ["dist", "node_modules"],
+    "exec": "npm run development",
+    "legacyWatch": true
+}
