@@ -1,4 +1,5 @@
 import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
+import { userLookup } from "lib/plugins/firebase.auth";
 import prisma from "lib/prisma";
 import { userSchemas, $ref, CreateUserRequest, UserList } from "lib/schemas/User.schema";
 
@@ -18,13 +19,17 @@ export default async function (fastify: FastifyInstance) {
     Body:CreateUserRequest
   }>, reply: FastifyReply) => {
     
-    try{
-      
+    try{ 
       const firebaseId = request.body.firebaseId;
       const check = await prisma.user.count({ where: { firebaseId:firebaseId } });
       if(check){
-        return reply.code(400).send({ message: " This user already exists " })
+        return reply.code(400).send({ message: "This user already exists " })
       }
+
+      const firebaseRecord = await userLookup(firebaseId);
+      if(!firebaseRecord || firebaseRecord.uid){
+        return reply.code(400).send({ message: "Firebase Id does not exist" })
+      } 
 
       const user = await prisma.user.create({data: { ...request.body }});
       return reply.code(201).send({ message: "User Created !", data: user })
