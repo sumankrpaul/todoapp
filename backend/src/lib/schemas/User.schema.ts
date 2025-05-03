@@ -19,7 +19,7 @@ const userCore = z.object({
     })
 })
 
-const userResponseSchema = userCore.omit({ firebaseId: true });
+export const userResponseSchema = userCore.omit({ firebaseId: true });
 
 const createUserSchema = userCore.omit({ id: true });
 

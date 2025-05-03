@@ -1,0 +1,21 @@
+enum TodoStatus {
+    DRAFT
+    INPOGRESS
+    HOLD
+    COMPLETED
+}
+
+model Todos {
+    id          Int        @id @default(autoincrement())
+    title       String
+    description String
+    status      TodoStatus @default(DRAFT)
+    createdAt   DateTime   @default(now())
+    updateAt    DateTime   @updatedAt
+    createdBy   User       @relation("Owner", fields: [ownerId], references: [id])
+    ownerId     Int
+    sharedTo    User?      @relation("Shared", fields: [sharedId], references: [id])
+    sharedId    Int?
+    sharedOn    DateTime?
+    complatedOn DateTime?
+}

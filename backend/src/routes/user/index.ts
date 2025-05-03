@@ -2,7 +2,7 @@ import { FastifyInstance, FastifyReply, FastifyRequest } from "fastify";
 import { userLookup } from "lib/plugins/firebase.auth";
 import { onRequestAuth } from "lib/plugins/hooks";
 import prisma from "lib/prisma";
-import { userSchemas, $ref, CreateUserRequest, UserList } from "lib/schemas/User.schema";
+import { userSchemas, $ref, CreateUserRequest } from "lib/schemas/User.schema";
 
 export default async function (fastify: FastifyInstance) {
   for(const schema of [...userSchemas]){
@@ -86,9 +86,9 @@ export default async function (fastify: FastifyInstance) {
       }
   }).addHook("onRequest", onRequestAuth)
 
-
   fastify.get('/:id', async (request, reply) => {
       const {id} = request.params as {id: string}
       return { error: `User Id is ${id}` }
   });
+
 }
