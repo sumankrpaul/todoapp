@@ -25,6 +25,10 @@ const createUserSchema = userCore.omit({ id: true });
 
 const createUserSuccessSchema = responseSchema(userResponseSchema)
 
+const userProfileResponseSchema = z.object({
+    detail: userResponseSchema
+})
+
 const userListSchema = z.object({
     count: z.number(),
     users: z.array(userResponseSchema)
@@ -40,5 +44,6 @@ export const { schemas: userSchemas, $ref  } = buildJsonSchemas({
     userResponseSchema,
     createUserSchema,
     createUserSuccessSchema,
-    userListSchema
+    userListSchema,
+    userProfileResponseSchema
 })

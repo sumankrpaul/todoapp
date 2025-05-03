@@ -18,7 +18,7 @@ export const userLookup = async (userId: string)=>{
         const userRecord = await auth.getUser(userId);
         return userRecord; 
     } catch(e){
-        console.log(e);
+        // console.log(e);
         return null;
     }
 }
