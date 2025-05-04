@@ -2,29 +2,45 @@ import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndP
 import { defineStore } from "pinia";
 import { auth } from "../plugins/firebase";
 import { computed, ref } from "vue";
+import type { IUser } from "../interfaces/IUser.interfaces";
+import { getUserProfile } from "../api/Auth.api";
 
-export const useAuthStore = defineStore('auth', ()=>{
-    const user = ref<User|null>(null);
+export const useAuthStore = defineStore('auth', () => {
+    const user = ref<string | null>(auth.currentUser ? auth.currentUser.uid : null);
+    const profile = ref<IUser | null>(null)
 
-    onAuthStateChanged(auth,(firebaseUser)=>{
-        user.value = firebaseUser;
+    const isAuthenticated = computed(() => !!user.value);
+
+    onAuthStateChanged(auth, (firebaseUser) => {
+        user.value = firebaseUser ? firebaseUser.uid : null;
+        updateProfile();
     })
 
-    const login = (email: string, password: string)=>{
+    const updateProfile = () => {
+        getUserProfile().then((userProfile) => {
+            profile.value = userProfile
+            console.log(user.value);
+            console
+        }).catch(() => {
+            profile.value = null;
+        })
+    }
+
+    const login = (email: string, password: string) => {
         return signInWithEmailAndPassword(auth, email, password);
     }
 
-    const signUp = (email: string, password: string)=>{
+    const signUp = (email: string, password: string) => {
         return createUserWithEmailAndPassword(auth, email, password);
     }
 
-    const logout = ()=>auth.signOut();
+    const logout = () => auth.signOut();
 
     return {
         login,
         signUp,
         logout,
-        isAuthenticated: computed(()=> !!user.value)
+        isAuthenticated,
+        userProfile: computed(() => profile.value)
     }
-    
 })
