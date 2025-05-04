@@ -1,7 +1,8 @@
 import admin from "firebase-admin";
 import { firebaseConfig } from "lib/configs";
 
-const auth = admin.initializeApp(firebaseConfig).auth();
+// @ts-ignore
+const auth = admin.initializeApp({  credential: admin.credential.cert(firebaseConfig)}).auth();
 
 export const verifyToken = async (authToken: string)=>{
     try{
@@ -18,7 +19,7 @@ export const userLookup = async (userId: string)=>{
         const userRecord = await auth.getUser(userId);
         return userRecord; 
     } catch(e){
-        // console.log(e);
+        console.log("Here",e);
         return null;
     }
 }

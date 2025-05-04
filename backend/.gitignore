@@ -1,6 +1,5 @@
 node_modules
 dist
-schema.prisma
 prisma/migrations
 package-lock.json
 src/lib/configs.ts

@@ -7,9 +7,9 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "prisma:merge": "prisma-merge -b prisma/schema.base.prisma -s prisma/models/*.prisma -o prisma/schema.prisma",
     "prisma:generate": "npm run prisma:merge && npx prisma generate",
-    "prisma:migrate": "npm run prisma:merge && npx prisma db push",
-    "development": "npm run prisma:migrate && ts-node -r tsconfig-paths/register src/server.ts",
-    "dev": "nodemon",
+    "prisma:migrate": "npx prisma db push",
+    "development": "ts-node -r tsconfig-paths/register src/server.ts",
+    "dev": "npm run prisma:migrate && nodemon",
     "start": "npm run prisma:generate && npx tsc && node dist/server.js"
   },
   "author": "smnkumarpaul",
