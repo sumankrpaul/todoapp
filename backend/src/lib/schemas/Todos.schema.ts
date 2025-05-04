@@ -56,9 +56,14 @@ const todoListSchemaResponse = z.object({
 
 export type TodoListResponse = z.infer<typeof todoListSchemaResponse> 
 
+const todoDetailsResponse = z.object({
+    detail: TodosCore
+})
+
 
 export const {schemas: todoSchemas, $ref } = buildJsonSchemas({
     createTodoRequest,
     createTodoSuccessResp,
-    todoListSchemaResponse
+    todoListSchemaResponse,
+    todoDetailsResponse
 })

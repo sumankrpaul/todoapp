@@ -83,5 +83,38 @@ export default async function (fastify: FastifyInstance) {
     }
   })
 
+  fastify.route({
+    method: 'GET',
+    url: '/:id',
+    schema: {
+      response:{
+        200: $ref('todoDetailsResponse')
+      }
+    },
+    preHandler: onRequestAuth,
+    handler: async (request, reply)=>{
+      try{
+        const {id} = request.params as { id: string };
+        
+        if(!isNaN(+id)){
+          const todo = await prisma.todos.findUnique({ where: { id: +id }, 
+            include: {
+              createdBy: true,
+              sharedTo: true
+            } 
+          });
+          if(todo){
+            return reply.code(200).send({ detail: todo })
+          } return reply.code(404).send({error: " No such TODO found "});
+        }
+
+        return reply.code(400).send({error: "Enter a valid TODO Id"})
+        
+      } catch {
+        return reply.code(500).send({ error: "Todos can not be created" })
+      }
+    }
+  })
+
      
 }
