@@ -4,7 +4,7 @@ import Layout from '../components/Layout.vue';
 </script>
 
 <template>
-    <Layout>
+    <Layout title="Users">
         <h1> User Page </h1>
         <router-view></router-view>
     </Layout>

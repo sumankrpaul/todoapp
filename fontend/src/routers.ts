@@ -7,10 +7,12 @@ import Profile from "./components/Profile.vue";
 import TodoPage from "./pages/TodoPage.vue";
 import AuthPage from "./pages/AuthPage.vue";
 import UserPage from "./pages/UserPage.vue";
-
+import { useAuthStore } from "./stores/auth.store";
 const routes: RouteRecordRaw[] = [
     {
         path: '/todos', component: TodoPage,
+        name: "Todos",
+        beforeEnter: authGurd,
         children: [
             {
                 path: 'list',
@@ -28,6 +30,7 @@ const routes: RouteRecordRaw[] = [
     },
     {
         path: '/auth', component: AuthPage,
+        name: 'Auth',
         children: [
             {
                 path: 'login',
@@ -46,6 +49,7 @@ const routes: RouteRecordRaw[] = [
     {
         path: '/user',
         component: UserPage,
+        beforeEnter: authGurd,
         children: [
             {
                 path: 'profile',
@@ -56,6 +60,10 @@ const routes: RouteRecordRaw[] = [
                 redirect: '/user/profile'
             }
         ]
+    },
+    {
+        path: '/',
+        redirect: '/todos'
     }
 ]
 
@@ -64,5 +72,13 @@ const router = createRouter({
     routes
 })
 
+
+function authGurd() {
+    const { isAuthenticated } = useAuthStore();
+    if (!isAuthenticated) {
+        return { name: 'Auth' }
+    }
+    return;
+}
 
 export default router;
