@@ -25,6 +25,8 @@ services:
       - PORT=8000
       - DATABASE_URL=postgres://suman:mypass@pgsql:5432/todos
   client:
+    depends_on:
+      - api
     build:
       context: fontend
       dockerfile: Dockerfile.dev

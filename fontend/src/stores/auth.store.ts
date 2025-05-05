@@ -1,4 +1,4 @@
-import { signInWithEmailAndPassword } from "firebase/auth";
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from "firebase/auth";
 import { defineStore } from "pinia";
 import { auth } from "../plugins/firebase";
 import { reactive, ref } from "vue";
@@ -45,6 +45,15 @@ export const useAuthStore = defineStore('auth', () => {
         }
     }
 
+    const signUp = async (email: string, password: string) => {
+        try {
+            const user = await createUserWithEmailAndPassword(auth, email, password);
+            return user;
+        } catch (e) {
+            throw e;
+        }
+    }
+
     const isReady = async () => {
         if (!stateLoaded.value) {
             await auth.authStateReady();
@@ -66,6 +75,8 @@ export const useAuthStore = defineStore('auth', () => {
         updateProfileDetails,
         login,
         isReady,
-        logout
+        logout,
+        signUp,
+        resetUser
     }
 })
