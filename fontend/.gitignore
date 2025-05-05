@@ -25,4 +25,3 @@ dist-ssr
 *.sw?
 
 src/plugins/configs.ts
-package-lock.json
