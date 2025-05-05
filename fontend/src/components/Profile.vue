@@ -1,6 +1,10 @@
 <script setup lang="ts">
+import { useAuthStore } from '../stores/auth.store';
+
+const { logout } = useAuthStore()
+
 </script>
 
 <template>
-    <h1> User Profile </h1> 
+    <button @click="logout"> Log Out </button>
 </template>

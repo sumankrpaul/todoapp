@@ -8,15 +8,17 @@ import TodoPage from "./pages/TodoPage.vue";
 import AuthPage from "./pages/AuthPage.vue";
 import UserPage from "./pages/UserPage.vue";
 import { useAuthStore } from "./stores/auth.store";
+
 const routes: RouteRecordRaw[] = [
     {
         path: '/todos', component: TodoPage,
-        name: "Todos",
+
         beforeEnter: authGurd,
         children: [
             {
                 path: 'list',
-                component: TodoList
+                component: TodoList,
+                name: "Todos"
             },
             {
                 path: ':id',
@@ -29,12 +31,12 @@ const routes: RouteRecordRaw[] = [
         ]
     },
     {
-        path: '/auth', component: AuthPage,
-        name: 'Auth',
-        beforeEnter() {
-            const { isAuthenticated } = useAuthStore();
-            console.log("From Auth", { isAuthenticated })
-            if (isAuthenticated) {
+        path: '/auth',
+        component: AuthPage,
+        async beforeEnter() {
+            const { userProfile, isReady } = useAuthStore();
+            await isReady();
+            if (userProfile.isLoggedIn) {
                 return { name: 'Todos' }
             }
             return true;
@@ -42,7 +44,8 @@ const routes: RouteRecordRaw[] = [
         children: [
             {
                 path: 'login',
-                component: Login
+                component: Login,
+                name: 'Auth'
             },
             {
                 path: 'signup',
@@ -81,9 +84,11 @@ const router = createRouter({
 })
 
 
-function authGurd() {
-    const { isAuthenticated } = useAuthStore();
-    if (!isAuthenticated) {
+async function authGurd() {
+    const { userProfile, isReady } = useAuthStore();
+    await isReady();
+    console.log(" Logged In ", userProfile.isLoggedIn);
+    if (!userProfile.isLoggedIn) {
         return { name: 'Auth' }
     }
     return;

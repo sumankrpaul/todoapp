@@ -24,7 +24,8 @@ const router = useRouter();
 const handleFormSubmit = handleSubmit(async (value) => {
     try {
         await LogingUser(value);
-        router.push("/todos");
+        console.log("Here now");
+        router.push("/todos/list");
     } catch (e) {
         console.log(e);
     }

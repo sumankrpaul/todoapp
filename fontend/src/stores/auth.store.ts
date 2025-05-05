@@ -1,46 +1,71 @@
-import { createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, type User } from "firebase/auth";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { defineStore } from "pinia";
 import { auth } from "../plugins/firebase";
-import { computed, ref } from "vue";
+import { reactive, ref } from "vue";
 import type { IUser } from "../interfaces/IUser.interfaces";
 import { getUserProfile } from "../api/Auth.api";
 
+interface IUserProfile extends IUser {
+    isLoggedIn: boolean;
+}
+
+const defaultUser: IUserProfile = {
+    isLoggedIn: false,
+    id: 0,
+    email: "",
+    name: ""
+}
+
 export const useAuthStore = defineStore('auth', () => {
-    const user = ref<string | null>(auth.currentUser ? auth.currentUser.uid : null);
-    const profile = ref<IUser | null>(null)
 
-    const isAuthenticated = computed(() => !!user.value);
+    const stateLoaded = ref(false);
 
-    onAuthStateChanged(auth, (firebaseUser) => {
-        user.value = firebaseUser ? firebaseUser.uid : null;
-        updateProfile();
-    })
+    const userProfile = reactive<IUserProfile>(defaultUser);
 
-    const updateProfile = () => {
-        getUserProfile().then((userProfile) => {
-            profile.value = userProfile
-            console.log(user.value);
-            console
-        }).catch(() => {
-            profile.value = null;
-        })
+    const resetUser = (newUser = defaultUser) => {
+        Object.assign(userProfile, { ...newUser });
     }
 
-    const login = (email: string, password: string) => {
-        return signInWithEmailAndPassword(auth, email, password);
+    const updateProfileDetails = async () => {
+        try {
+            const userProfile = await getUserProfile();
+            resetUser({ ...userProfile, isLoggedIn: true });
+        } catch (e) {
+            resetUser()
+        }
     }
 
-    const signUp = (email: string, password: string) => {
-        return createUserWithEmailAndPassword(auth, email, password);
+    const login = async (email: string, password: string) => {
+        try {
+            const user = await signInWithEmailAndPassword(auth, email, password);
+            await updateProfileDetails();
+            return user;
+        } catch (e) {
+            throw e
+        }
     }
 
-    const logout = () => auth.signOut();
+    const isReady = async () => {
+        if (!stateLoaded.value) {
+            await auth.authStateReady();
+            await updateProfileDetails();
+        }
+        stateLoaded.value = true;
+        return
+    }
+
+    const logout = async () => {
+        await auth.signOut();
+        resetUser();
+        window.location.reload();
+    }
+
 
     return {
+        userProfile,
+        updateProfileDetails,
         login,
-        signUp,
-        logout,
-        isAuthenticated,
-        userProfile: computed(() => profile.value)
+        isReady,
+        logout
     }
 })

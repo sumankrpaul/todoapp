@@ -10,6 +10,6 @@ const { userProfile } = useAuthStore()
         <h1 class=" text-2xl font-semibold" >
             {{ name }}
         </h1>
-        <h1> {{  userProfile? userProfile.name: "" }} </h1>
+        <router-link to="/user/profile" > {{  userProfile.name }} </router-link>
     </nav>
 </template>

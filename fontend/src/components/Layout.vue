@@ -2,7 +2,7 @@
 import { useAuthStore } from '../stores/auth.store';
 import Navigation from './Navigation.vue';
 
-const { isAuthenticated } = useAuthStore();
+const { userProfile } = useAuthStore();
 
 defineProps<{ title: string }>()
 
@@ -10,8 +10,8 @@ defineProps<{ title: string }>()
 
 <template>
     <div class="h-screen flex flex-col bg-slate-100">
-         <Navigation :name="title" v-if="isAuthenticated"  />
-         <div :class="(isAuthenticated)? 'nav-height' : 'h-full'" >
+         <Navigation :name="title" v-if="userProfile.isLoggedIn"  />
+         <div :class="(userProfile.isLoggedIn)? 'nav-height' : 'h-full'" >
              <slot/>
          </div>
     </div>
