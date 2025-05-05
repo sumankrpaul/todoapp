@@ -1,0 +1,41 @@
+//******** AUTO GENERATED FILE, DO NOT EDIT.  *********
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
+}
+
+enum TodoStatus {
+    DRAFT
+    INPOGRESS
+    HOLD
+    COMPLETED
+}
+
+model Todos {
+    id          Int        @id @default(autoincrement())
+    title       String
+    description String
+    status      TodoStatus @default(DRAFT)
+    createdAt   DateTime   @default(now())
+    updateAt    DateTime   @updatedAt
+    createdBy   User       @relation("Owner", fields: [ownerId], references: [id])
+    ownerId     Int
+    sharedTo    User?      @relation("Shared", fields: [sharedId], references: [id])
+    sharedId    Int?
+    sharedOn    DateTime?
+    complatedOn DateTime?
+}
+
+model User {
+    id          Int     @id @default(autoincrement())
+    name        String
+    email       String  @unique
+    firebaseId  String  @unique
+    myTodos     Todos[] @relation("Owner")
+    sharedTodos Todos[] @relation("Shared")
+}

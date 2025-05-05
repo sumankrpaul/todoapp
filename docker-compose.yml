@@ -1,0 +1,39 @@
+services:
+  pgsql:
+    container_name: pg-database
+    image: postgres:15
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=suman
+      - POSTGRES_PASSWORD=mypass
+      - POSTGRES_DB=todos
+    volumes:
+      - ./pgdata:/var/lib/postgresql/data
+  api:
+    depends_on:
+      - pgsql
+    build:
+      context: backend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /app/node_modules
+      - ./backend:/app
+    ports:
+      - "8000:8000"
+    environment:
+      - PORT=8000
+      - DATABASE_URL=postgres://suman:mypass@pgsql:5432/todos
+  client:
+    depends_on:
+      - api
+    build:
+      context: fontend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - /app/node_modules
+      - ./fontend:/app
+    ports:
+      - "8001:8001"
+    env_file:
+      - ./fontend/.env
